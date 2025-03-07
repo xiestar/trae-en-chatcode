@@ -23,7 +23,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(response);
   } catch (error: unknown) {
     console.error('Chat API error:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Failed to process chat request';
+    let errorMessage = 'Failed to process chat request';
+    if (error instanceof Error) {
+      errorMessage = `Error: ${error.message}`;
+      if ('cause' in error) {
+        errorMessage += `\nCause: ${error.cause}`;
+      }
+    } else if (typeof error === 'object' && error !== null) {
+      errorMessage = `Error: ${JSON.stringify(error)}`;
+    }
     return NextResponse.json(
       { error: errorMessage },
       { status: 500 }
