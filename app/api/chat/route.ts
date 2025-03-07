@@ -21,9 +21,9 @@ export async function POST(request: NextRequest) {
 
     const response = await createChatCompletion(messages);
     return NextResponse.json(response);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Chat API error:', error);
-    const errorMessage = error.message || 'Failed to process chat request';
+    const errorMessage = error instanceof Error ? error.message : 'Failed to process chat request';
     return NextResponse.json(
       { error: errorMessage },
       { status: 500 }
