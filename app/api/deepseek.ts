@@ -16,6 +16,10 @@ export interface ChatCompletionResponse {
 }
 
 export async function createChatCompletion(messages: Message[]): Promise<ChatCompletionResponse> {
+  if (!process.env.DEEPSEEK_API_KEY) {
+    throw new Error('DEEPSEEK_API_KEY environment variable is not configured');
+  }
+
   try {
     const response = await fetch('https://ark.cn-beijing.volces.com/api/v3/chat/completions', {
       method: 'POST',
@@ -34,16 +38,21 @@ export async function createChatCompletion(messages: Message[]): Promise<ChatCom
 
     if (!response.ok) {
       const errorData = await response.text();
+      console.error('DeepSeek API error response:', {
+        status: response.status,
+        statusText: response.statusText,
+        data: errorData
+      });
       throw new Error(`API error (${response.status}): ${errorData || response.statusText}`);
     }
 
-    if (!process.env.DEEPSEEK_API_KEY) {
-      throw new Error('DEEPSEEK_API_KEY is not configured');
-    }
-
-    return response.json();
+    const data = await response.json();
+    return data;
   } catch (error) {
-    console.error('DeepSeek API error:', error);
+    console.error('DeepSeek API error:', error instanceof Error ? {
+      message: error.message,
+      stack: error.stack
+    } : error);
     throw error;
   }
 }
