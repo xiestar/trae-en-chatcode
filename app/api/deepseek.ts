@@ -1,5 +1,3 @@
-import { NextResponse } from 'next/server';
-
 export interface Message {
   role: 'user' | 'assistant';
   content: string;

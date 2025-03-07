@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Message } from "./api/deepseek";
 import ReactMarkdown from "react-markdown";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 
 export default function Home() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
