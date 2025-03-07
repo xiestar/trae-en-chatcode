@@ -12,12 +12,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (!process.env.DEEPSEEK_API_KEY) {
+      return NextResponse.json(
+        { error: 'DEEPSEEK_API_KEY environment variable is not configured' },
+        { status: 500 }
+      );
+    }
+
     const response = await createChatCompletion(messages);
     return NextResponse.json(response);
-  } catch (error) {
+  } catch (error: any) {
     console.error('Chat API error:', error);
+    const errorMessage = error.message || 'Failed to process chat request';
     return NextResponse.json(
-      { error: 'Failed to process chat request' },
+      { error: errorMessage },
       { status: 500 }
     );
   }
