@@ -15,7 +15,7 @@ export interface ChatCompletionResponse {
   }[];
 }
 
-export async function createChatCompletion(messages: Message[]): Promise<ChatCompletionResponse> {
+export async function createChatCompletion(messages: Message[]): Promise<ReadableStream> {
   if (!process.env.DEEPSEEK_API_KEY) {
     throw new Error('DEEPSEEK_API_KEY environment variable is not configured');
   }
@@ -33,6 +33,7 @@ export async function createChatCompletion(messages: Message[]): Promise<ChatCom
           { role: 'system', content: '你是人工智能助手.' },
           ...messages
         ],
+        stream: true
       }),
     });
 
@@ -46,8 +47,7 @@ export async function createChatCompletion(messages: Message[]): Promise<ChatCom
       throw new Error(`API error (${response.status}): ${errorData || response.statusText}`);
     }
 
-    const data = await response.json();
-    return data;
+    return response.body!;
   } catch (error) {
     console.error('DeepSeek API error:', error instanceof Error ? {
       message: error.message,
