@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { auth } from '../../firebase';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 
 export default function AuthForm() {
   const [isLogin, setIsLogin] = useState(true);
@@ -20,18 +20,22 @@ export default function AuthForm() {
       } else {
         await createUserWithEmailAndPassword(auth, email, password);
       }
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error: Error | unknown) {
+      setError(error instanceof Error ? error.message : String(error));
     }
   };
 
+  // 移除未使用的 handleLogout 函数
+  // 如果将来需要使用，可以取消注释
+  /*
   const handleLogout = async () => {
     try {
       await signOut(auth);
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error: Error | unknown) {
+      setError(error instanceof Error ? error.message : String(error));
     }
   };
+  */
 
   return (
     <div className="w-full max-w-md mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg">

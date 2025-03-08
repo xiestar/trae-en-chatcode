@@ -14,6 +14,8 @@ const MessageContent = memo(({ content }: { content: string }) => (
   </div>
 ));
 
+MessageContent.displayName = 'MessageContent';
+
 const MessageItem = memo(({ message, isLatest, currentMessage }: { message: Message; isLatest: boolean; currentMessage: string }) => (
   <div className="flex items-start space-x-3 animate-fade-in">
     <div className={`w-8 h-8 rounded-lg ${message.role === "assistant" ? "bg-gradient-to-r from-blue-600 to-cyan-500" : "bg-gray-600"} flex items-center justify-center text-white font-semibold shrink-0`}>
@@ -29,6 +31,8 @@ const MessageItem = memo(({ message, isLatest, currentMessage }: { message: Mess
   </div>
 ));
 
+MessageItem.displayName = 'MessageItem';
+
 export default function Home() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [user, setUser] = useState<User | null>(null);
@@ -39,13 +43,14 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentMessage, setCurrentMessage] = useState<string>("");
-  const [isTyping, setIsTyping] = useState(false);
-  const typewriterRef = useRef<NodeJS.Timeout | null>(null);
+  // 这些变量暂时未使用，但可能在将来的功能中需要，先注释掉
+  // const [isTyping, setIsTyping] = useState(false);
+  // const typewriterRef = useRef<NodeJS.Timeout | null>(null);
 
   const typeMessage = useCallback((message: string) => {
-    setIsTyping(true);
+    // setIsTyping(true);
     setCurrentMessage(message);
-    setIsTyping(false);
+    // setIsTyping(false);
   }, []);
 
   useEffect(() => {
@@ -175,7 +180,8 @@ export default function Home() {
                   });
                   shouldClearPartialMessage = true;
                 }
-              } catch (e) {
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              } catch (_error) {
                 // JSON解析失败，可能是不完整的数据
                 shouldClearPartialMessage = false;
               }
@@ -191,7 +197,8 @@ export default function Home() {
               partialMessage = partialMessage.slice(lastNewlineIndex + 1);
             }
           }
-        } catch (e) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch (_error) {
           // 继续累积不完整的JSON
           continue;
         }
