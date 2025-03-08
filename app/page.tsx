@@ -16,14 +16,24 @@ const MessageContent = memo(({ content }: { content: string }) => (
 
 MessageContent.displayName = 'MessageContent';
 
-const MessageItem = memo(({ message, isLatest, currentMessage }: { message: Message; isLatest: boolean; currentMessage: string }) => (
+const MessageItem = memo(({ message, isLatest, currentMessage, isLoading }: { message: Message; isLatest: boolean; currentMessage: string; isLoading: boolean }) => (
   <div className="flex items-start space-x-3 animate-fade-in">
     <div className={`w-8 h-8 rounded-lg ${message.role === "assistant" ? "bg-gradient-to-r from-blue-600 to-cyan-500" : "bg-gray-600"} flex items-center justify-center text-white font-semibold shrink-0`}>
       {message.role === "assistant" ? "AI" : "U"}
     </div>
     <div className={`flex-1 ${message.role === "assistant" ? "bg-gray-100 dark:bg-gray-700" : "bg-blue-50 dark:bg-gray-600"} rounded-2xl p-4 text-gray-700 dark:text-gray-200 prose dark:prose-invert max-w-none break-words`}>
       {message.role === "assistant" && isLatest ? (
-        <MessageContent content={currentMessage} />
+        <>
+          {isLoading && currentMessage === "" ? (
+            <div className="flex items-center space-x-2 h-6">
+              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse delay-150"></div>
+              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse delay-300"></div>
+            </div>
+          ) : (
+            <MessageContent content={currentMessage} />
+          )}
+        </>
       ) : (
         <MessageContent content={message.content} />
       )}
@@ -104,6 +114,7 @@ export default function Home() {
     setMessages(prev => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
+    setCurrentMessage(""); // 重置当前消息，显示加载动画
     setError(null);
 
     try {
@@ -218,9 +229,10 @@ export default function Home() {
         message={message}
         isLatest={index === messages.length - 1}
         currentMessage={currentMessage}
+        isLoading={isLoading}
       />
     ))
-  ), [messages, currentMessage]);
+  ), [messages, currentMessage, isLoading]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 flex flex-col">
